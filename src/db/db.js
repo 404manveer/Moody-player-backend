@@ -1,17 +1,21 @@
 const mongoose = require("mongoose");
 
-function connectdb(){
-    mongoose.connect(process.env.Mongoosedb_url)
-    .then(()=>{
-        console.log("connect to Mongodb");
-        
-    })
-    .catch((err)=>{
-        console.log("Error connecting to Mongodb:",err);
-        
+let isConnected = false; // track connection
 
-    })
+async function connectDB() {
+  if (isConnected) return;
+
+  try {
+    await mongoose.connect(process.env.Mongoosedb_url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = true;
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+    throw err;
+  }
 }
 
-
-module.exports = connectdb
+module.exports = connectDB;
